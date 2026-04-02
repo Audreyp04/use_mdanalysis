@@ -4,7 +4,7 @@ from MDAnalysis.analysis import align
 import matplotlib.pyplot as plt
 from matplotlib import colormaps
 
-u=mda.Universe("topology.pdb", "trajectory.xtc")
+u=mda.Universe("nowat.tpr", "../traj/cat_pbc.xtc")
 ag=u.select_atoms("protein")
 
 def calculate_eccentricity():
@@ -24,9 +24,9 @@ def calculate_eccentricity():
 
 def plot_eccentricity():
     data=np.load("eccentricity.npy")
-    plt.imshow(data,cmap='viridis')
+    plt.imshow(data,cmap='magma')
     plt.colorbar('Oligomer Eccentricity')
     plt.xlabel('Time (µs)')
     plt.ylabel('Eccentricity')
     plt.yscale(min=0,max=1)
-    plt.savefig()
+    plt.savefig('eccentricity.png', bbox_inches='tight')
