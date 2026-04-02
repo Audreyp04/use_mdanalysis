@@ -1,13 +1,13 @@
 import MDAnalysis as mda 
 from MDAnalysis.analysis import distances
-import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 
-f=mda.Universe('production.tpr', '../../traj/cat_pbc.xtc')
-
-mem_ca = f.select_atoms('name C1 and resname *PG')
-pro_ca = f.select_atoms('name CA and not resname *PG')
+f=mda.Universe('nowat.tpr', '../traj/cat_pbc.xtc')
+#Includes every membrane component I have used thusfar,
+#may need to be modified in the future if addnl components are used
+mem_ca = f.select_atoms('name C1 CA and resname *PG *PC POPE PSM POPS POPI CHOL GM1 GLPA CER1 GLPB') 
+pro_ca = f.select_atoms('name CA and protein') #selects alpha carbons of protein residues
 
 n_mem=len(mem_ca)
 n_pro=len(pro_ca)
@@ -15,7 +15,7 @@ n_pro=len(pro_ca)
 print(n_mem)
 print(n_pro)
 
-cutoff = 10.0
+cutoff = 10.0 # 5 Angstrom Cutoff
 
 # initialize contact accumulator
 contact_sum = np.zeros((n_mem, n_pro))
@@ -36,10 +36,11 @@ for ts in f.trajectory:
 # average contact frequency
 contact_avg = contact_sum / n_frames
 
-contact_avg[contact_avg < 0.1] = np.nan
+contact_avg[contact_avg < 0.01] = np.nan
 
-cutoff_display = 0.80  # e.g. at least 80% of frames
+cutoff_display = 0.50  # e.g. at least 80% of frames
 
+print(contact_avg)
 # find rows/columns that have any interaction
 mem_mask = np.any(contact_avg > cutoff_display, axis=1)
 pro_mask = np.any(contact_avg > cutoff_display, axis=0)
@@ -48,8 +49,8 @@ pro_mask = np.any(contact_avg > cutoff_display, axis=0)
 contact_reduced = contact_avg[mem_mask][:, pro_mask]
 
 # also reduce labels
-mem_resids_reduced = mem_ca.resids[mem_mask]
-pro_resids_reduced = pro_ca.resids[pro_mask]
+mem_resids_reduced = mem_ca.resnames[mem_mask]
+pro_resids_reduced = pro_ca.resnames[pro_mask]
 
 fig, ax = plt.subplots(figsize=(15,10))
 
