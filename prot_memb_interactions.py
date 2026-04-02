@@ -53,7 +53,7 @@ pro_resids_reduced = pro_ca.resnames[pro_mask]
 
 fig, ax = plt.subplots(figsize=(15,10))
 
-im = ax.imshow(contact_reduced, cmap='viridis', vmin=0, vmax=1)
+im = ax.imshow(contact_reduced, cmap='magma', vmin=0, vmax=1)
 
 tick_interval = 1  # now you can show all since it's smaller
 ax.set_yticks(np.arange(len(mem_resids_reduced)))
