@@ -15,7 +15,7 @@ n_pro=len(pro_ca)
 print(n_mem)
 print(n_pro)
 
-cutoff = 10.0 # 5 Angstrom Cutoff
+cutoff = 5.0 # 5 Angstrom Cutoff
 
 # initialize contact accumulator
 contact_sum = np.zeros((n_mem, n_pro))
@@ -40,7 +40,6 @@ contact_avg[contact_avg < 0.01] = np.nan
 
 cutoff_display = 0.50  # e.g. at least 80% of frames
 
-print(contact_avg)
 # find rows/columns that have any interaction
 mem_mask = np.any(contact_avg > cutoff_display, axis=1)
 pro_mask = np.any(contact_avg > cutoff_display, axis=0)
