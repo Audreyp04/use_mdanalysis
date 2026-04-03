@@ -29,7 +29,7 @@ def align_trajectory():
 def calculate_eccentricity():
     eccentricity=[]
     for ts in u.trajectory:  
-        p=ag.moments_of_inertia()
+        p=ag.moment_of_inertia()
         e1,e2,e3 = np.linalg.eigvalsh(p)
         etop=e1+e2-e3
         ebot=-e1+e2+e3
