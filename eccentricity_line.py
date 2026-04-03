@@ -29,23 +29,20 @@ def align_trajectory():
 def calculate_eccentricity():
     eccentricity=[]
     for ts in u.trajectory:  
-        p=ag.principal_axes()
-        print(p)
+        p=ag.moments_of_inertia()
         e1,e2,e3 = np.linalg.eigvalsh(p)
         etop=e1+e2-e3
-        print(etop)
         ebot=-e1+e2+e3
-        print(ebot)
         e = np.sqrt((1 - (etop / ebot)))
-        print(e)
         eccentricity.append(e)
     eccentricity=np.array(eccentricity)
+    print(eccentricity)
     np.save('eccentricity.npy',eccentricity)
 
 def plot_eccentricity():
     data = np.load("eccentricity.npy")
 
-    smoothdata = sliding_window_view(data,window).mean(axis=0)
+    smoothdata = sliding_window_view(data,window).mean(axis=1)
 
     # Time axis correction to correspond to smoothed data
     time_ns = np.arange(len(data)) / 10.0
@@ -54,7 +51,6 @@ def plot_eccentricity():
     #color the line by eccentricity value
     points = np.array([time_smooth, smoothdata]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
     norm = Normalize(vmin=0.0, vmax=1.0)
     lc = LineCollection(segments, cmap="magma", norm=norm)
     lc.set_array(smoothdata)
