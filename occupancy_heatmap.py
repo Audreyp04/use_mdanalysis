@@ -1,12 +1,8 @@
 import MDAnalysis as mda
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
-from MDAnalysis.analysis import align
 from MDAnalysis.analysis.align import AlignTraj
 import matplotlib.pyplot as plt
-from matplotlib import colormaps
-from matplotlib.collections import LineCollection
-from matplotlib.colors import Normalize
 
 # Change only these items
 replicates=[1,2,3]
@@ -55,42 +51,24 @@ def plot_eccentricity():
         ecc_stack.append(smooth)
 
     ecc_stack = np.array(ecc_stack)
+    tmax=ecc_stack.shape[1] * 0.1
+    plt.figure(figsize=(7,3))
+    plt.imshow(
+        ecc_stack,
+        aspect='auto',
+        origin='lower',
+        cmap='magma',
+        vmin=0.0,
+        vmax=1.0,
+        extent=[0,tmax,1,len(ecc_stack)]
+    )
 
-    mean_ecc = ecc_stack.mean(axis=0)
-    std_ecc = ecc_stack.std(axis=0)
+    plt.colorbar(label='Eccentricity')
+    plt.xlabel('Time (ns)')
+    plt.ylabel('Replica')
+    plt.title("Hexamer Eccentricity Occupancy")
 
-    # Time axis correction to correspond to smoothed data
-    time_ns = np.arange(len(mean_ecc)) / 10.0
-
-    #color the line by eccentricity value
-    points = np.array([time_ns, mean_ecc]).T.reshape(-1, 1, 2)
-    segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-    norm = Normalize(vmin=0.0, vmax=1.0)
-    lc = LineCollection(segments, cmap="magma", norm=norm)
-    lc.set_array(mean_ecc)
-    lc.set_linewidth(1)
-
-    fig, ax = plt.subplots(figsize=(6, 4))
-    plt.fill_between(
-        time_ns,
-        mean_ecc+std_ecc,
-        mean_ecc-std_ecc,
-        color='violet',
-        alpha=0.05,
-        label='± 1 SD')
-    ax.add_collection(lc)
-
-    ax.set_ylim(0, 1)
-    ax.set_xlim(0,2000)
-    ax.set_xlabel("Time (ns)")
-    ax.set_ylabel("Eccentricity")
-    ax.set_title(title)
-
-    cbar = fig.colorbar(lc, ax=ax)
-    cbar.set_label("Eccentricity")
-
-    plt.savefig(out_filename, dpi=300, bbox_inches="tight")
+    plt.savefig('wlip_hex_occupancy.png', dpi=300,bbox_inches='tight')
     plt.close()
 
 if __name__ == "__main__":

@@ -9,12 +9,13 @@ from matplotlib.collections import LineCollection
 from matplotlib.colors import Normalize
 
 
-# Change the items within quotes in these lines
+# Change the items after '=' in these lines
 
-in_top="" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
-in_traj="" # trajectory file (path) (.xtc, .trr)
-title="Hexamer Eccentricity (Rep 1, No Free Lipids)" # Title to go on figure
-out_filename="nolip_hex1_ecc.png" # Name for figure .png file
+in_top = "top.nowat.pdb" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
+in_traj = "cat.pbc.nowat.xtc" # trajectory file (path) (.xtc, .trr)
+title = "Hexamer Eccentricity (Rep 1)" # Title to go on figure
+out_filename = "hex1_ecc.png" # Name for figure .png file
+window = 5 #window size for smoothed data, 50 is usually good
 
 #CHANGE NOTHING BELOW THIS LINE
 #------------------------------
@@ -22,29 +23,29 @@ u=mda.Universe(in_top, in_traj)
 ag=u.select_atoms("protein")
 
 def align_trajectory():
-    AlignTraj(u, u, select="protein", memoryview=True)
+    align=AlignTraj(u, u, select="protein")
+    align.run()
 
 def calculate_eccentricity():
     eccentricity=[]
     for ts in u.trajectory:  
-        I=ag.moment_of_inertia()
-        
-        evals=np.linalg.eigvalsh(I)
-        evals=np.sort(evals)
-
-        Imin=evals[0]
-        Iavg=np.mean(evals)
-
-        e = 1-(Imin/Iavg)
+        p=ag.principal_axes()
+        print(p)
+        e1,e2,e3 = np.linalg.eigvalsh(p)
+        etop=e1+e2-e3
+        print(etop)
+        ebot=-e1+e2+e3
+        print(ebot)
+        e = np.sqrt((1 - (etop / ebot)))
+        print(e)
         eccentricity.append(e)
-    eccentricity = np.array(eccentricity)
+    eccentricity=np.array(eccentricity)
     np.save('eccentricity.npy',eccentricity)
 
 def plot_eccentricity():
     data = np.load("eccentricity.npy")
 
-    window = 50
-    smoothdata = sliding_window_view(data, window).mean(axis=1)
+    smoothdata = sliding_window_view(data,window).mean(axis=0)
 
     # Time axis correction to correspond to smoothed data
     time_ns = np.arange(len(data)) / 10.0
@@ -62,7 +63,6 @@ def plot_eccentricity():
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.add_collection(lc)
 
-    ax.set_xlim(time_smooth.min(), time_smooth.max())
     ax.set_ylim(0, 1)
     ax.set_xlim(0,2000)
     ax.set_xlabel("Time (ns)")
