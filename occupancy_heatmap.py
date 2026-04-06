@@ -10,7 +10,7 @@ in_top = "nowat.tpr" # topology file (path) that matches trajectory (.tpr, .pdb,
 traj_template = "rep{}/traj/cat_pbc.xtc"
 title = "Hexamer Eccentricity (w/ Free Lipids)" # Title to go on figure
 out_filename = "hexavg_ecc.png" # Name for figure .png file
-window = 50 #window size for smoothed data, 50 is usually good
+window = 5 #window size for smoothed data, 50 is usually good
 
 #CHANGE NOTHING BELOW THIS LINE
 #------------------------------
