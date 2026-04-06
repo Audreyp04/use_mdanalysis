@@ -41,7 +41,7 @@ def calculate_eccentricity_all_reps():
             e = np.sqrt((1 - (etop / ebot)))
             ecc.append(e)
         ecc=np.array(ecc)
-        np.save('eccentricity.npy',ecc)
+        np.save(f"eccentricity_rep{i}.npy",ecc)
         print(f"  Saved eccentricity_rep{i}.npy")
 
 
