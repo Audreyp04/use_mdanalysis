@@ -10,11 +10,11 @@ from matplotlib.colors import Normalize
 
 # Change only these items
 replicates=[1,2,3]
-in_top = "nowat.tpr" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
+in_top = "rep1/production.tpr" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
 traj_template = "rep{}/traj/cat_pbc.xtc"
 title = "Hexamer Eccentricity (w/ Free Lipids)" # Title to go on figure
 out_filename = "hexavg_ecc.png" # Name for figure .png file
-window = 50 #window size for smoothed data, 50 is usually good
+window = 5 #window size for smoothed data, 50 is usually good
 
 #CHANGE NOTHING BELOW THIS LINE
 #------------------------------
@@ -33,15 +33,15 @@ def calculate_eccentricity_all_reps():
 
         ecc = []
 
-        for ts in u.trajectory:
-            I = ag.moment_of_inertia()
-            evals = np.linalg.eigvalsh(I)
-            e = np.sqrt(1.0 - (evals[0] / evals.mean()))
+        for ts in u.trajectory:  
+            p=ag.moment_of_inertia()
+            e1,e2,e3 = np.linalg.eigvalsh(p)
+            etop=e1+e2-e3
+            ebot=-e1+e2+e3
+            e = np.sqrt((1 - (etop / ebot)))
             ecc.append(e)
-
-        ecc = np.array(ecc)
-        np.save(f"eccentricity_rep{i}.npy", ecc)
-
+        ecc=np.array(ecc)
+        np.save('eccentricity.npy',ecc)
         print(f"  Saved eccentricity_rep{i}.npy")
 
 
