@@ -29,15 +29,15 @@ def calculate_eccentricity_all_reps():
 
         ecc = []
 
-        for ts in u.trajectory:
-            I = ag.moment_of_inertia()
-            evals = np.linalg.eigvalsh(I)
-            e = np.sqrt(1.0 - (evals[0] / evals.mean()))
+        for ts in u.trajectory:  
+            p=ag.moment_of_inertia()
+            e1,e2,e3 = np.linalg.eigvalsh(p)
+            etop=e1+e2-e3
+            ebot=-e1+e2+e3
+            e = np.sqrt((1 - (etop / ebot)))
             ecc.append(e)
-
-        ecc = np.array(ecc)
-        np.save(f"eccentricity_rep{i}.npy", ecc)
-
+        ecc=np.array(ecc)
+        np.save('eccentricity.npy',ecc)
         print(f"  Saved eccentricity_rep{i}.npy")
 
 
