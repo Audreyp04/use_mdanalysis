@@ -1,3 +1,6 @@
+#Written by Audrey D. Prendergast 
+#Fully functional as of 4/6/2026
+
 import MDAnalysis as mda
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
