@@ -8,7 +8,7 @@ from MDAnalysis.lib.distances import distance_array
 #----------#
 in_top = "top.nowat.pdb" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
 in_traj = "cat.pbc.nowat.xtc" # trajectory file (path) (.xtc, .trr)
-title = "Hexamer Eccentricity (Rep 1)" # Title to go on figure
+title = "Hexamer-POPX Interactions (Rep 1)" # Title to go on figure
 out_filename = "hex1_ecc.png" # Name for figure .png file
 cutoff = 4.0 # Distance cutoff for interactions in angstroms
 #----------#
@@ -64,7 +64,7 @@ def plot_contacts(prot_resi, popx_atoms, contact_freq):
     
     plt.xlabel("Free POPC Atoms")
     plt.ylabel("Protein Residues")
-    plt.title(fr"A$\beta$-Free-POPC Interaction Heatmap (Rep 1)")
+    plt.title(title)
 
     plt.tight_layout()
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")
