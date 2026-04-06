@@ -14,7 +14,7 @@ in_top = "rep1/production.tpr" # topology file (path) that matches trajectory (.
 traj_template = "rep{}/traj/cat_pbc.xtc"
 title = "Hexamer Eccentricity (w/ Free Lipids)" # Title to go on figure
 out_filename = "hexavg_ecc.png" # Name for figure .png file
-window = 5 #window size for smoothed data, 50 is usually good
+window = 100 #window size for smoothed data, 50 is usually good
 
 #CHANGE NOTHING BELOW THIS LINE
 #------------------------------
@@ -76,8 +76,8 @@ def plot_eccentricity():
         time_ns,
         mean_ecc+std_ecc,
         mean_ecc-std_ecc,
-        color='violet',
-        alpha=0.05,
+        color='navajowhite',
+        alpha=0.25,
         label='± 1 SD')
     ax.add_collection(lc)
 
