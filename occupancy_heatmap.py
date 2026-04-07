@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 
 # Change only these items
 replicates=[1,2,3]
-in_top = "nowat.tpr" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
-traj_template = "rep{}/traj/cat_pbc.xtc"
-title = "Hexamer Eccentricity (w/ Free Lipids)" # Title to go on figure
-out_filename = "hexavg_ecc.png" # Name for figure .png file
+in_top = "top.nowat.pdb" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
+traj_template = "rep{}/cat.pbc.nowat.xtc"
+title = "Hexamer Eccentric Occupancy (w/o Free Lipids)" # Title to go on figure
+out_filename = "wolip_hex_occupancy.png" # Name for figure .png file
 window = 5 #window size for smoothed data, 50 is usually good
 
 #CHANGE NOTHING BELOW THIS LINE
@@ -37,7 +37,7 @@ def calculate_eccentricity_all_reps():
             e = np.sqrt((1 - (etop / ebot)))
             ecc.append(e)
         ecc=np.array(ecc)
-        np.save('eccentricity.npy',ecc)
+        np.save(f"eccentricity_rep{i}.npy",ecc)
         print(f"  Saved eccentricity_rep{i}.npy")
 
 
