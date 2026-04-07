@@ -6,10 +6,10 @@ from MDAnalysis.lib.distances import distance_array
 
 #USER INPUTS
 #----------#
-in_top = "top.nowat.pdb" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
-in_traj = "cat.pbc.nowat.xtc" # trajectory file (path) (.xtc, .trr)
+in_top = "nowat.tpr" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
+in_traj = "../traj/cat_clus_pbc.xtc" # trajectory file (path) (.xtc, .trr)
 title = "Hexamer-POPX Interactions (Rep 1)" # Title to go on figure
-out_filename = "hex1_ecc.png" # Name for figure .png file
+out_filename = "hex1_popx_int.png" # Name for figure .png file
 cutoff = 4.0 # Distance cutoff for interactions in angstroms
 #----------#
 
@@ -32,7 +32,7 @@ def prep():
 
     nframes=0
 
-def calculate_contacts(prot_resi, popx_atoms, contact_matrix, nframes):
+def calculate_contacts(u, prot_resi, popx_atoms, contact_matrix, nframes):
     for ts in u.trajectory:
         nframes += 1
 
@@ -69,3 +69,9 @@ def plot_contacts(prot_resi, popx_atoms, contact_freq):
     plt.tight_layout()
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")
     plt.close()
+
+
+if __name__ == '__main__':
+    prep()
+    calculate_contacts(u, prot_resi, popx_atoms, contact_matrix, nframes)
+    plot_contacts(prot_resi, popx_atoms, contact_freq)
