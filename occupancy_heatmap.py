@@ -66,9 +66,9 @@ def plot_eccentricity():
     plt.colorbar(label='Eccentricity')
     plt.xlabel('Time (ns)')
     plt.ylabel('Replica')
-    plt.title("Hexamer Eccentricity Occupancy")
+    plt.title(title)
 
-    plt.savefig('wlip_hex_occupancy.png', dpi=300,bbox_inches='tight')
+    plt.savefig(out_filename, dpi=300,bbox_inches='tight')
     plt.close()
 
 if __name__ == "__main__":
