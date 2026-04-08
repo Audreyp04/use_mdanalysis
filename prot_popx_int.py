@@ -29,19 +29,20 @@ def prep():
     print(n_res,n_popx)
 
     contact_matrix = np.zeros((n_res, n_popx))
+    return u, prot_resi, popx_atoms, contact_matrix
 
+def calculate_contacts(u, prot_resi, popx_atoms, contact_matrix):
     nframes=0
-
-def calculate_contacts(u, prot_resi, popx_atoms, contact_matrix, nframes):
     for ts in u.trajectory:
         nframes += 1
+        popx_pos = popx_atoms.positions
+
 
         #Compute PROT x POPX distance matrix
         for i, res in enumerate(prot_resi):
-            res_atoms=res.atoms.positions
-            popx_pos = popx_atoms.positions
+            res_pos=prot_resi.positions
 
-            dists=distance_array(res_atoms, popx_pos)
+            dists=distance_array(res_pos, popx_pos)
 
             # contacts per POPX atom
             contacts=np.any(dists < cutoff, axis=0)
@@ -50,6 +51,8 @@ def calculate_contacts(u, prot_resi, popx_atoms, contact_matrix, nframes):
             # normalize contact frequencies
         contact_freq = contact_matrix / nframes
         np.save("protein_popx_contacts.npy", contact_freq)
+
+        return contact_freq
 
 def plot_contacts(prot_resi, popx_atoms, contact_freq):
     res_labels = [f'{res.resname}{res.resid}' for res in prot_resi]
@@ -72,6 +75,6 @@ def plot_contacts(prot_resi, popx_atoms, contact_freq):
 
 
 if __name__ == '__main__':
-    prep()
-    calculate_contacts(u, prot_resi, popx_atoms, contact_matrix, nframes)
+    u, prot_resi, popx_atoms, contact_matrix = prep()
+    contact_freq = calculate_contacts(u, prot_resi, popx_atoms, contact_matrix)
     plot_contacts(prot_resi, popx_atoms, contact_freq)
