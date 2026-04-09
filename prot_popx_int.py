@@ -14,33 +14,6 @@ out_filename = "hex1_popx_moiety_contacts.png"
 cutoff = 4.0          # Å
 thresh = 0.1          # contact frequency threshold
 
-# ---- DEFINE POPX MOIETIES (EDIT THESE AS NEEDED!) ----
-POPX_MOIETIES = {
-    "Headgroup": [
-        "P", "N",
-        "O11", "O12", "O13", "O14"
-    ],
-
-    "Glycerol": [
-        "C1", "C2", "C3",
-        "O21", "O22", "O31", "O32"
-    ],
-
-    "Palmitoyl Tail": [
-        a for a in [
-            "C11","C12","C13","C14","C15","C16","C17","C18","C19",
-            "C110","C111","C112","C113","C114","C115","C116"
-        ]
-    ],
-
-    "Oleoyl Tail": [
-        a for a in [
-            "C21","C22","C23","C24","C25","C26","C27","C28","C29",
-            "C210","C211","C212","C213","C214","C215","C216","C217","C218"
-        ]
-    ],
-}
-
 # =========================
 # PREP
 # =========================
@@ -102,22 +75,32 @@ def filter_contacts(prot_resi, popx_atoms, contact_freq, thresh):
 # =========================
 # MOIETY COLLAPSING
 # =========================
-def build_moiety_map(popx_atoms, moieties):
+def build_moiety_map(popx_atoms):
     atom_to_moiety = []
-    moiety_names = list(moieties.keys())
+    moiety_names = ["headgroup", "glycerol", "palmitoyl", "oleoyl"]
 
     for atom in popx_atoms:
-        assigned = False
-        for moiety, names in moieties.items():
-            if atom.name in names:
-                atom_to_moiety.append(moiety)
-                assigned = True
-                break
-        if not assigned:
-            atom_to_moiety.append("other")
+        name = atom.name
 
-    if "other" in atom_to_moiety:
-        moiety_names.append("other")
+        # Headgroup
+        if name in {"P", "N", "O11", "O12", "O13", "O14"}:
+            atom_to_moiety.append("headgroup")
+
+        # Glycerol / linker
+        elif name in {"C1", "C2", "C3", "O21", "O22", "O31", "O32"}:
+            atom_to_moiety.append("glycerol")
+
+        # sn-1 chain (palmitoyl)
+        elif name.startswith("C1"):
+            atom_to_moiety.append("palmitoyl")
+
+        # sn-2 chain (oleoyl)
+        elif name.startswith("C2"):
+            atom_to_moiety.append("oleoyl")
+
+        # Anything else (should now be empty)
+        else:
+            atom_to_moiety.append("other")
 
     return atom_to_moiety, moiety_names
 
@@ -170,9 +153,7 @@ if __name__ == "__main__":
         prot_resi, popx_atoms, contact_freq, thresh
     )
 
-    atom_to_moiety, moiety_names = build_moiety_map(
-        popx_atoms_filt, POPX_MOIETIES
-    )
+    atom_to_moiety, moiety_names = build_moiety_map(popx_atoms_filt)
 
     contact_freq_moiety = collapse_contacts_by_moiety(
         contact_freq_filt, atom_to_moiety, moiety_names
