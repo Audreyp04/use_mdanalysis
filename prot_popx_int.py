@@ -13,6 +13,7 @@ title = "Hexamer & Free Lipid Interactions (Rep 1)"
 out_filename = "hex1_popx_moiety_contacts.png"
 cutoff = 4.0          # Å
 subunit_length = 42
+threshold=0.25
 
 # =========================
 # PREP
@@ -153,7 +154,7 @@ def split_residue_index(prot_resids, subunit_length):
 def collapse_across_subunits(contact_freq_moiety, local_resi):
     """
     Collapse residue contacts so residues 1–42 appear once.
-    Uses mean across subunits.
+    Uses max across subunits.
     """
     n_local = local_resi.max()
     n_moieties = contact_freq_moiety.shape[1]
@@ -162,11 +163,11 @@ def collapse_across_subunits(contact_freq_moiety, local_resi):
 
     for r in range(1, n_local + 1):
         mask = local_resi == r
-        collapsed[r - 1] = np.mean(contact_freq_moiety[mask], axis=0)
+        collapsed[r - 1] = np.max(contact_freq_moiety[mask], axis=0)
 
     return collapsed
 
-def interacting_subunits(contact_freq_moiety, local_resi, subunit, threshold=0.0):
+def interacting_subunits(contact_freq_moiety, local_resi, subunit, threshold):
     """
     Returns a dict: {local_residue: sorted list of interacting subunits}
     """
