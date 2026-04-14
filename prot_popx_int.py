@@ -9,10 +9,9 @@ from MDAnalysis.lib.distances import distance_array
 # =========================
 in_top = "nowat.tpr"
 in_traj = "../traj/cat_pbc_nowat.xtc"
-title = "Hexamer–POPX Interactions (Rep 1)"
+title = "Hexamer & Free Lipid Interactions (Rep 1)"
 out_filename = "hex1_popx_moiety_contacts.png"
 cutoff = 4.0          # Å
-thresh = 0.1          # contact frequency threshold
 
 # =========================
 # PREP
@@ -53,23 +52,6 @@ def calculate_contacts(u, prot_resi, popx_atoms, contact_matrix):
     np.save("protein_popx_contacts.npy", contact_freq)
 
     return contact_freq
-
-
-# =========================
-# FILTER BY FREQUENCY
-# =========================
-def filter_contacts(prot_resi, popx_atoms, contact_freq, thresh):
-    res_mask = np.any(contact_freq > thresh, axis=1)
-    popx_mask = np.any(contact_freq > thresh, axis=0)
-
-    contact_freq_filt = contact_freq[res_mask][:, popx_mask]
-    prot_resi_filt = prot_resi[res_mask]
-    popx_atoms_filt = popx_atoms[popx_mask]
-
-    if contact_freq_filt.size == 0:
-        raise ValueError(f"No contacts above threshold {thresh}")
-
-    return prot_resi_filt, popx_atoms_filt, contact_freq_filt
 
 
 # =========================
@@ -149,18 +131,14 @@ if __name__ == "__main__":
     u, prot_resi, popx_atoms, contact_matrix = prep()
     contact_freq = calculate_contacts(u, prot_resi, popx_atoms, contact_matrix)
 
-    prot_resi_filt, popx_atoms_filt, contact_freq_filt = filter_contacts(
-        prot_resi, popx_atoms, contact_freq, thresh
-    )
-
-    atom_to_moiety, moiety_names = build_moiety_map(popx_atoms_filt)
+    atom_to_moiety, moiety_names = build_moiety_map(popx_atoms)
 
     contact_freq_moiety = collapse_contacts_by_moiety(
-        contact_freq_filt, atom_to_moiety, moiety_names
+        contact_freq, atom_to_moiety, moiety_names
     )
 
     plot_moiety_contacts(
-        prot_resi_filt, moiety_names, contact_freq_moiety
+        prot_resi, moiety_names, contact_freq_moiety
     )
 
     print("✅ Analysis complete. Output saved to:", out_filename)
