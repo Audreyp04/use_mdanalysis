@@ -4,7 +4,7 @@ import MDAnalysis as mda
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from MDAnalysis.lib.distances import distance_array
+from MDAnalysis.lib.distances import capped_distance
 
 # =========================
 # USER INPUTS
@@ -57,34 +57,47 @@ def collapse_membrane_atoms_to_residues(contact_freq, memb_atoms, memb_resi):
 
     return collapsed
 
-def calculate_contacts_vectorized(u, prot_resi, memb_atoms, contact_matrix):
+
+def calculate_contacts_capped(u, prot_resi, memb_atoms, contact_matrix):
 
     protein_atoms = prot_resi.atoms
 
-    # Build residue slices
-    res_atom_counts = np.array([len(r.atoms) for r in prot_resi])
-    res_atom_starts = np.r_[0, np.cumsum(res_atom_counts[:-1])]
+    # ---- map protein atoms → residue indices (0-based) ----
+    # length = number of protein atoms
+    atom_to_res = protein_atoms.resindices
 
     nframes = 0
 
-    for ts in u.trajectory:
+    for ts in u.trajectory[::2]:
         nframes += 1
 
-        dists = distance_array(
+        # ----- find contacting atom pairs only -----
+        # returns array of (prot_atom_idx, memb_atom_idx)
+        pairs = capped_distance(
             protein_atoms.positions,
-            memb_atoms.positions
+            memb_atoms.positions,
+            max_cutoff=cutoff,
+            return_distances=False
         )
 
-        atom_contacts = dists < cutoff
+        if pairs.size == 0:
+            continue
 
-        # Collapse atom → residue
-        residue_contacts = np.logical_or.reduceat(
-            atom_contacts,
-            res_atom_starts,
+        # ----- collapse protein atoms → residues -----
+        prot_atom_idx = pairs[:, 0]
+        memb_atom_idx = pairs[:, 1]
+
+        prot_res_idx = atom_to_res[prot_atom_idx]
+
+        frame_pairs = np.unique(
+            np.column_stack((prot_res_idx, memb_atom_idx)),
             axis=0
         )
 
-        contact_matrix += residue_contacts.astype(int)
+        contact_matrix[
+            frame_pairs[:, 0],
+            frame_pairs[:, 1]
+        ] += 1
 
     contact_freq = contact_matrix / nframes
     return contact_freq
@@ -213,7 +226,7 @@ if __name__ == "__main__":
 
     u, prot_resi, prot_resids, memb_resi, memb_atoms, contact_matrix = prep()
 
-    contact_freq = calculate_contacts_vectorized(
+    contact_freq = calculate_contacts_capped(
         u, prot_resi, memb_atoms, contact_matrix
     )
 
