@@ -16,7 +16,7 @@ title = "Hexamer & Free Lipid Interactions (Rep 1)"
 out_filename = "hex1_popx_moiety_contacts.png"
 cutoff = 4.0          # Å
 subunit_length = 42
-threshold=0.25
+threshold=0.80
 
 # =========================
 # PREP
