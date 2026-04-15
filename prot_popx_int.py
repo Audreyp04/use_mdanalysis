@@ -236,7 +236,8 @@ def plot_moiety_contacts(res_labels, moiety_names, collapsed_contacts):
         xticklabels=moiety_names,
         yticklabels=res_labels,
         cmap="magma",
-        cbar_kws={"label": "Contact Frequency"}
+        cbar_kws={"label": "Contact Frequency"},
+        vmin=0, vmax=1
     )
 
     plt.xlabel("POPC Moiety")
