@@ -89,6 +89,23 @@ def calculate_contacts_vectorized(u, prot_resi, memb_atoms, contact_matrix):
     contact_freq = contact_matrix / nframes
     return contact_freq
 
+def average_contacts_by_lipid_type(collapsed_contacts, memb_resi):
+    """
+    Average membrane contacts by lipid type (resname).
+    """
+    # Get lipid type per membrane residue
+    lipid_names = np.array([r.resname for r in memb_resi])
+    lipid_types = np.unique(lipid_names)
+
+    avg_contacts = np.zeros((collapsed_contacts.shape[0], len(lipid_types)))
+
+    for i, lipid in enumerate(lipid_types):
+        mask = lipid_names == lipid
+        avg_contacts[:, i] = collapsed_contacts[:, mask].mean(axis=1)
+
+    return avg_contacts, lipid_types
+
+
 def split_residue_index(prot_resids, subunit_length):
     prot_resids = np.asarray(prot_resids)
     subunit = (prot_resids - 1) // subunit_length + 1
@@ -169,16 +186,15 @@ def build_residue_labels(prot_resi, local_resi, interacting_map):
 # =========================
 # PLOTTING
 # =========================
-def plot_contacts(res_labels,memb_resi, collapsed_contacts):
-    memb_labels = [f"{r.resname}{r.resid}" for r in memb_resi]
+def plot_contacts(res_labels, lipid_types, collapsed_contacts):
 
     plt.figure(figsize=(8, 8))
     sns.heatmap(
         collapsed_contacts,
-        xticklabels=memb_labels,
+        xticklabels=lipid_types,
         yticklabels=res_labels,
         cmap="magma",
-        cbar_kws={"label": "Contact Frequency"},
+        cbar_kws={"label": "Mean Contact Frequency"},
         vmin=0, vmax=1
     )
 
@@ -215,6 +231,13 @@ if __name__ == "__main__":
     memb_resi
     )
 
+    
+    collapsed_contacts, lipid_types = average_contacts_by_lipid_type(
+        collapsed_contacts,
+        memb_resi
+    )
+
+
     interacting_map = interacting_subunits(
         contact_freq, local_resi, subunit, threshold
     )
@@ -224,7 +247,7 @@ if __name__ == "__main__":
     )
 
     plot_contacts(
-        res_labels, memb_resi, collapsed_contacts
+        res_labels, lipid_types, collapsed_contacts
     )
 
     print("✅ Analysis complete. Output saved to:", out_filename)
