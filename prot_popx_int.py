@@ -1,3 +1,6 @@
+#Written by Audrey D. Prendergast
+#Fully functional as of 4/15/2026
+
 import MDAnalysis as mda
 import numpy as np
 import matplotlib.pyplot as plt
