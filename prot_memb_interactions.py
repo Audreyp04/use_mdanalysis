@@ -104,7 +104,7 @@ def calculate_contacts_capped(u, prot_resi, memb_atoms, contact_matrix):
         ] += 1
 
     contact_freq = contact_matrix / nframes
-    return contact_freq
+    return contact_freq, nframes
 
 def average_contacts_by_lipid_type(collapsed_contacts, memb_resi):
     """
@@ -203,11 +203,11 @@ def build_residue_labels(prot_resi, local_resi, interacting_map):
 # =========================
 # PLOTTING
 # =========================
-def plot_contacts(res_labels, lipid_types, collapsed_contacts):
+def plot_contacts(res_labels, lipid_types, collapsed_contacts, nframes):
 
     plt.figure(figsize=(8, 8))
     sns.heatmap(
-        collapsed_contacts,
+        collapsed_contacts*nframes,
         xticklabels=lipid_types,
         yticklabels=res_labels,
         cmap="magma",
@@ -230,7 +230,7 @@ if __name__ == "__main__":
 
     u, prot_resi, prot_resids, memb_resi, memb_atoms, contact_matrix = prep()
 
-    contact_freq = calculate_contacts_capped(
+    contact_freq, nframes = calculate_contacts_capped(
         u, prot_resi, memb_atoms, contact_matrix
     )
 
@@ -264,7 +264,7 @@ if __name__ == "__main__":
     )
 
     plot_contacts(
-        res_labels, lipid_types, collapsed_contacts
+        res_labels, lipid_types, collapsed_contacts, nframes
     )
 
     print("✅ Analysis complete. Output saved to:", out_filename)
