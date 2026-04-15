@@ -12,7 +12,7 @@ from MDAnalysis.lib.distances import capped_distance
 in_top = "nowat.tpr"
 in_traj = "../traj/cat_pbc_nowat.xtc"
 title = "Hexamer & Membrane Lipid Interactions (Rep 1)"
-out_filename = "hex_memb_moiety_contacts.png"
+out_filename = "hex_memb_contacts.png"
 cutoff = 4.0          # Å
 subunit_length = 42
 threshold=0.80
@@ -46,8 +46,15 @@ def collapse_membrane_atoms_to_residues(contact_freq, memb_atoms, memb_resi):
 
     collapsed = np.zeros((n_prot, n_memb_res))
 
-    # atom → residue index for membrane atoms
-    atom_to_res = memb_atoms.resindices  # 0..n_memb_res-1
+    # build mapping: Universe residue index → local membrane residue index
+    resindex_map = {
+        res.index: i for i, res in enumerate(memb_resi)
+    }
+
+    # remap atom → membrane-residue index
+    atom_to_res = np.array([
+        resindex_map[atom.residue.index] for atom in memb_atoms
+    ])
 
     for atom_idx, res_idx in enumerate(atom_to_res):
         collapsed[:, res_idx] = np.maximum(
@@ -58,8 +65,9 @@ def collapse_membrane_atoms_to_residues(contact_freq, memb_atoms, memb_resi):
     return collapsed
 
 
-def calculate_contacts_capped(u, prot_resi, memb_atoms, contact_matrix):
 
+def calculate_contacts_capped(u, prot_resi, memb_atoms, contact_matrix):
+    assert contact_matrix.shape[1] == len(memb_atoms)
     protein_atoms = prot_resi.atoms
 
     # ---- map protein atoms → residue indices (0-based) ----
