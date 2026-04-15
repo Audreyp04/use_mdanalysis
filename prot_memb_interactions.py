@@ -1,73 +1,230 @@
-import MDAnalysis as mda 
-from MDAnalysis.analysis import distances
+
+
+import MDAnalysis as mda
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+from MDAnalysis.lib.distances import distance_array
 
-f=mda.Universe('nowat.tpr', '../traj/cat_pbc.xtc')
-#Includes every membrane component I have used thusfar,
-#may need to be modified in the future if addnl components are used
-mem_ca = f.select_atoms('name C1 CA and resname *PG *PC POPE PSM POPS POPI CHOL GM1 GLPA CER1 GLPB') 
-pro_ca = f.select_atoms('name CA and protein') #selects alpha carbons of protein residues
+# =========================
+# USER INPUTS
+# =========================
+in_top = "nowat.tpr"
+in_traj = "../traj/cat_pbc_nowat.xtc"
+title = "Hexamer & Membrane Lipid Interactions (Rep 1)"
+out_filename = "hex_memb_moiety_contacts.png"
+cutoff = 4.0          # Å
+subunit_length = 42
+threshold=0.80
 
-n_mem=len(mem_ca)
-n_pro=len(pro_ca)
+# =========================
+# PREP
+# =========================
+def prep():
+    u = mda.Universe(in_top, in_traj)
+    prot = u.select_atoms("protein")
+    memb = u.select_atoms("not resname POPX and not name H* and not protein and not resname CL and not resname K")
 
-print(n_mem)
-print(n_pro)
+    prot_resi = prot.residues
+    prot_resids = prot.residues.resids 
+    memb_resi = memb.residues
+    memb_atoms = memb.atoms
 
-cutoff = 5.0 # 5 Angstrom Cutoff
+    contact_matrix = np.zeros((len(prot_resi), len(memb_atoms)))
+    return u, prot_resi, prot_resids, memb_resi, memb_atoms, contact_matrix
 
-# initialize contact accumulator
-contact_sum = np.zeros((n_mem, n_pro))
 
-n_frames = 0
+# =========================
+# CONTACT CALCULATION
+# =========================
+def collapse_membrane_atoms_to_residues(contact_freq, memb_atoms, memb_resi):
+    """
+    Collapse membrane atom contacts into membrane residue contacts.
+    """
+    n_prot = contact_freq.shape[0]
+    n_memb_res = len(memb_resi)
 
-for ts in f.trajectory:
-    dist_arr = distances.distance_array(
-        mem_ca.positions,
-        pro_ca.positions,
-        box=f.dimensions
+    collapsed = np.zeros((n_prot, n_memb_res))
+
+    # atom → residue index for membrane atoms
+    atom_to_res = memb_atoms.resindices  # 0..n_memb_res-1
+
+    for atom_idx, res_idx in enumerate(atom_to_res):
+        collapsed[:, res_idx] = np.maximum(
+            collapsed[:, res_idx],
+            contact_freq[:, atom_idx]
+        )
+
+    return collapsed
+
+def calculate_contacts_vectorized(u, prot_resi, memb_atoms, contact_matrix):
+
+    protein_atoms = prot_resi.atoms
+
+    # Build residue slices
+    res_atom_counts = np.array([len(r.atoms) for r in prot_resi])
+    res_atom_starts = np.r_[0, np.cumsum(res_atom_counts[:-1])]
+
+    nframes = 0
+
+    for ts in u.trajectory:
+        nframes += 1
+
+        dists = distance_array(
+            protein_atoms.positions,
+            memb_atoms.positions
+        )
+
+        atom_contacts = dists < cutoff
+
+        # Collapse atom → residue
+        residue_contacts = np.logical_or.reduceat(
+            atom_contacts,
+            res_atom_starts,
+            axis=0
+        )
+
+        contact_matrix += residue_contacts.astype(int)
+
+    contact_freq = contact_matrix / nframes
+    return contact_freq
+
+def split_residue_index(prot_resids, subunit_length):
+    prot_resids = np.asarray(prot_resids)
+    subunit = (prot_resids - 1) // subunit_length + 1
+    local_resi = ((prot_resids - 1) % subunit_length) + 1
+    return subunit, local_resi
+
+def collapse_across_subunits(contact_freq, local_resi):
+    """
+    Collapse residue contacts so residues appear once.
+    Uses max across subunits.
+    """
+    n_local = local_resi.max()
+    n_contacts = contact_freq.shape[1]
+
+    collapsed_contacts = np.zeros((n_local, n_contacts))
+
+    for r in range(1, n_local + 1):
+        mask = local_resi == r
+        collapsed_contacts[r - 1] = np.max(contact_freq[mask], axis=0)
+
+    return collapsed_contacts
+
+def interacting_subunits(contact_freq, local_resi, subunit, threshold):
+    """
+    Returns a dict: {local_residue: sorted list of interacting subunits}
+    """
+    interactions = {}
+
+    for r in np.unique(local_resi):
+        mask = local_resi == r
+        interacting = np.any(contact_freq[mask] > threshold, axis=1)
+        interactions[r] = sorted(subunit[mask][interacting])
+
+    return interactions
+
+def compact_subunits(subunits):
+    if not subunits:
+        return ""
+
+    ranges = []
+    start = prev = subunits[0]
+
+    for s in subunits[1:]:
+        if s == prev + 1:
+            prev = s
+        else:
+            ranges.append((start, prev))
+            start = prev = s
+    ranges.append((start, prev))
+
+    formatted = []
+    for a, b in ranges:
+        if a == b:
+            formatted.append(f"S{a}")
+        else:
+            formatted.append(f"S{a}–{b}")
+
+    return ", ".join(formatted)
+
+def build_residue_labels(prot_resi, local_resi, interacting_map):
+    labels = []
+
+    for r in range(1, int(local_resi.max()) + 1):
+        idx = np.where(local_resi == r)[0][0]
+        res = prot_resi[idx]
+
+        base = f"{res.resname}{r}"
+        subs = interacting_map[r]
+
+        if subs:
+            base += f" ({compact_subunits(subs)})"
+
+        labels.append(base)
+
+
+    return labels
+
+# =========================
+# PLOTTING
+# =========================
+def plot_contacts(res_labels,memb_resi, collapsed_contacts):
+    memb_labels = [f"{r.resname}{r.resid}" for r in memb_resi]
+
+    plt.figure(figsize=(8, 8))
+    sns.heatmap(
+        collapsed_contacts,
+        xticklabels=memb_labels,
+        yticklabels=res_labels,
+        cmap="magma",
+        cbar_kws={"label": "Contact Frequency"},
+        vmin=0, vmax=1
+    )
+
+    plt.xlabel("Membrane Component")
+    plt.ylabel("Protein Residue")
+    plt.title(title)
+
+    plt.tight_layout()
+    plt.savefig(out_filename, dpi=300, bbox_inches="tight")
+    plt.close()
+
+# =========================
+# MAIN
+# =========================
+if __name__ == "__main__":
+
+    u, prot_resi, prot_resids, memb_resi, memb_atoms, contact_matrix = prep()
+
+    contact_freq = calculate_contacts_vectorized(
+        u, prot_resi, memb_atoms, contact_matrix
+    )
+
+    subunit, local_resi = split_residue_index(
+        prot_resids, subunit_length
+    )
+
+    collapsed_contacts = collapse_across_subunits(
+        contact_freq, local_resi
     )
     
-    contacts = (dist_arr <= cutoff).astype(int)
-    contact_sum += contacts
-    n_frames += 1
+    collapsed_contacts = collapse_membrane_atoms_to_residues(
+    collapsed_contacts,
+    memb_atoms,
+    memb_resi
+    )
 
-# average contact frequency
-contact_avg = contact_sum / n_frames
+    interacting_map = interacting_subunits(
+        contact_freq, local_resi, subunit, threshold
+    )
 
-contact_avg[contact_avg < 0.01] = np.nan
+    res_labels = build_residue_labels(
+        prot_resi, local_resi, interacting_map
+    )
 
-cutoff_display = 0.50  # e.g. at least 80% of frames
+    plot_contacts(
+        res_labels, memb_resi, collapsed_contacts
+    )
 
-# find rows/columns that have any interaction
-mem_mask = np.any(contact_avg > cutoff_display, axis=1)
-pro_mask = np.any(contact_avg > cutoff_display, axis=0)
-
-# reduce the matrix
-contact_reduced = contact_avg[mem_mask][:, pro_mask]
-
-# also reduce labels
-mem_resids_reduced = mem_ca.resnames[mem_mask]
-pro_resids_reduced = pro_ca.resnames[pro_mask]
-
-fig, ax = plt.subplots(figsize=(15,10))
-
-im = ax.imshow(contact_reduced, cmap='magma', vmin=0, vmax=1)
-
-tick_interval = 1  # now you can show all since it's smaller
-ax.set_yticks(np.arange(len(mem_resids_reduced)))
-ax.set_xticks(np.arange(len(pro_resids_reduced)))
-
-ax.set_yticklabels(mem_resids_reduced)
-ax.set_xticklabels(pro_resids_reduced, rotation=45, ha='right')
-
-plt.ylabel('Membrane residues')
-plt.xlabel('Protein residues')
-plt.title('Trajectory-averaged contacts')
-
-cbar = fig.colorbar(im, fraction=0.025, pad=0.04)
-cbar.ax.set_ylabel('Contact frequency')
-
-plt.savefig('reduced_contact_map.png', bbox_inches='tight')
-plt.close()
+    print("✅ Analysis complete. Output saved to:", out_filename)
