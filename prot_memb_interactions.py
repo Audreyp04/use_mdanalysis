@@ -46,14 +46,12 @@ def collapse_membrane_atoms_to_residues(contact_freq, memb_atoms, memb_resi):
 
     collapsed = np.zeros((n_prot, n_memb_res))
 
-    # build mapping: Universe residue index → local membrane residue index
-    resindex_map = {
-        res.index: i for i, res in enumerate(memb_resi)
-    }
+    # Map residue object -> local membrane-residue index
+    res_to_local = {res: i for i, res in enumerate(memb_resi)}
 
-    # remap atom → membrane-residue index
+    # Map each membrane atom to its local residue index
     atom_to_res = np.array([
-        resindex_map[atom.residue.index] for atom in memb_atoms
+        res_to_local[atom.residue] for atom in memb_atoms
     ])
 
     for atom_idx, res_idx in enumerate(atom_to_res):
@@ -63,8 +61,6 @@ def collapse_membrane_atoms_to_residues(contact_freq, memb_atoms, memb_resi):
         )
 
     return collapsed
-
-
 
 def calculate_contacts_capped(u, prot_resi, memb_atoms, contact_matrix):
     assert contact_matrix.shape[1] == len(memb_atoms)
