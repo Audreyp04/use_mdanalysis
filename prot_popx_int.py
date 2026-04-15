@@ -53,24 +53,6 @@ def build_atom_to_residue_map(prot_resi):
         idx += n_atoms
     return atom_to_res
 
-def calculate_contacts(u, prot_resi, popx_atoms, contact_matrix):
-    nframes = 0
-
-    for ts in u.trajectory:
-        nframes += 1
-        popx_pos = popx_atoms.positions
-
-        for i, res in enumerate(prot_resi):
-            res_pos = res.atoms.positions
-            dists = distance_array(res_pos, popx_pos)
-
-            contacts = np.any(dists < cutoff, axis=0)
-            contact_matrix[i] += contacts.astype(int)
-
-    contact_freq = contact_matrix / nframes
-    np.save("protein_popx_contacts.npy", contact_freq)
-
-    return contact_freq
 def calculate_contacts_vectorized(u, prot_resi, popx_atoms, contact_matrix):
 
     protein_atoms = prot_resi.atoms
