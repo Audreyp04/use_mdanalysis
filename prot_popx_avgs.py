@@ -12,7 +12,7 @@ from MDAnalysis.lib.distances import distance_array
 replicates=[1,2,3]
 in_top = "nowat.tpr"
 in_traj = "rep{}/traj/cat_pbc.xtc"
-title = "Hexamer & Free Lipid Interactions (Rep 1)"
+title = f"Hexamer & Free Lipid Interactions (n={len(replicates)})"
 out_filename = "hex1_popx_moiety_contacts.png"
 cutoff = 4.0          # Å
 subunit_length = 42
@@ -21,19 +21,17 @@ threshold=0.80
 # =========================
 # PREP
 # =========================
-def prep():
-    u = mda.Universe(in_top, in_traj)
+def prep(traj_path):
+    u = mda.Universe(in_top, traj_path)
     prot = u.select_atoms("protein")
     popx = u.select_atoms("resname POPX and not name H*")
 
     prot_resi = prot.residues
-    prot_resids = prot.residues.resids 
+    prot_resids = prot.residues.resids
     popx_atoms = popx.atoms
 
-    print(f"Protein residues: {len(prot_resi)}")
-    print(f"POPX atoms: {len(popx_atoms)}")
-
     contact_matrix = np.zeros((len(prot_resi), len(popx_atoms)))
+
     return u, prot_resi, prot_resids, popx_atoms, contact_matrix
 
 
@@ -230,12 +228,8 @@ def plot_moiety_contacts(res_labels, moiety_names, collapsed_contacts):
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")
     plt.close()
 
-# =========================
-# MAIN
-# =========================
-if __name__ == "__main__":
-
-    u, prot_resi, prot_resids, popx_atoms, contact_matrix = prep()
+def run_single_replicate(traj_path):
+    u, prot_resi, prot_resids, popx_atoms, contact_matrix = prep(traj_path)
 
     contact_freq = calculate_contacts_vectorized(
         u, prot_resi, popx_atoms, contact_matrix
@@ -256,15 +250,37 @@ if __name__ == "__main__":
     )
 
     interacting_map = interacting_subunits(
-        contact_freq_moiety, local_resi, subunit
+        contact_freq_moiety, local_resi, subunit, threshold
     )
 
     res_labels = build_residue_labels(
         prot_resi, local_resi, interacting_map
     )
 
-    plot_moiety_contacts(
-        res_labels, moiety_names, collapsed_contacts
-    )
+    return collapsed_contacts, res_labels, moiety_names
+# =========================
+# MAIN
+# =========================
+if __name__ == "__main__":
 
-    print("✅ Analysis complete. Output saved to:", out_filename)
+    all_contacts = []
+
+    for rep in replicates:
+        traj_path = in_traj.format(rep)
+        print(f"▶ Processing replicate {rep}")
+
+        collapsed_contacts, res_labels, moiety_names = run_single_replicate(
+            traj_path
+        )
+
+        all_contacts.append(collapsed_contacts)
+
+    all_contacts = np.stack(all_contacts, axis=0)
+    
+    mean_contacts = np.mean(all_contacts, axis=0)
+
+    plot_moiety_contacts(
+        res_labels,
+        moiety_names,
+        mean_contacts
+    )
