@@ -224,8 +224,8 @@ def plot_contacts(res_labels, lipid_types, collapsed_contacts):
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")
     plt.close()
 
-def run_single_replicate(trajpath):
-    u, prot_resi, prot_resids, memb_resi, memb_atoms, contact_matrix = prep(trajpath)
+def run_single_replicate():
+    u, prot_resi, prot_resids, memb_resi, memb_atoms, contact_matrix = prep()
 
     contact_counts, nframes = calculate_contacts_capped(
         u, prot_resi, memb_atoms, contact_matrix
