@@ -104,11 +104,11 @@ def build_moiety_map(popx_atoms):
             atom_to_moiety.append("glycerol")
 
         # sn-1 chain (palmitoyl)
-        elif name.startswith("C1"):
+        elif name.startswith("C1") and len(name) > 2:
             atom_to_moiety.append("palmitoyl")
 
         # sn-2 chain (oleoyl)
-        elif name.startswith("C2"):
+        elif name.startswith("C2") and len(name) > 2:
             atom_to_moiety.append("oleoyl")
 
         # Anything else (should now be empty)
