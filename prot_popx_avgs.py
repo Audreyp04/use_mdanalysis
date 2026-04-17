@@ -1,4 +1,5 @@
-#THIS IS NOT READY TO RUN
+#Written by Audrey D. Prendergast
+#Fully functional as of 4/16/2026
 
 import MDAnalysis as mda
 import numpy as np
