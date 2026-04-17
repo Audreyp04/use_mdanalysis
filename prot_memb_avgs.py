@@ -212,8 +212,8 @@ def plot_contacts(res_labels, lipid_types, collapsed_contacts):
         xticklabels=lipid_types,
         yticklabels=res_labels,
         cmap="magma",
-        cbar_kws={"label": "Mean Contact Frequency"},
-        vmin=0, vmax=1
+        cbar_kws={"label": "Number of Frames"},
+        vmin=0, vmax=125
     )
 
     plt.xlabel("Membrane Component")
@@ -265,7 +265,7 @@ if __name__ == "__main__":
         trajpath = in_traj.format(rep)
         print(f"▶ Processing replicate {rep}")
         counts, contact_counts, nframes, lipid_types, prot_resi, local_resi, subunit = (
-            run_single_replicate(trajpath)
+            run_single_replicate()
         )
 
         if total_counts is None:
@@ -277,8 +277,7 @@ if __name__ == "__main__":
         if contact_freq_for_labels is None:
             contact_freq_for_labels = contact_counts / nframes
 
-    # ---- normalize once across all replicates ----
-    mean_contacts = total_counts / total_frames
+    contacts = total_counts
 
     # ---- build labels using consistent topology ----
     interacting_map = interacting_subunits(
@@ -292,7 +291,7 @@ if __name__ == "__main__":
     plot_contacts(
         res_labels,
         lipid_types,
-        mean_contacts,
+        contacts,
     )
 
     print("✅ Replicate‑averaged analysis complete.")
