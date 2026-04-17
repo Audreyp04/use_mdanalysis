@@ -11,8 +11,8 @@ from MDAnalysis.lib.distances import capped_distance
 # =========================
 replicates=[1,2,3]
 in_top = "nowat.tpr"
-in_traj = "rep{}/traj/cat_pbc.xtc"
-title = f"Hexamer & Free Lipid Interactions (n={len(replicates)})"
+in_traj = "rep{}/traj/cat_pbc_nowat.xtc"
+title = f"Hexamer & Membrane Lipid Interactions (n={len(replicates)})"
 out_filename = "hex_memb_contacts.png"
 cutoff = 4.0          # Å
 subunit_length = 42
