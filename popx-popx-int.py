@@ -87,7 +87,7 @@ def build_moiety_map(popx_atoms):
         elif name in {"C2","C21","C22","C23","C24","C25" , 
                       "C26", "C27", "C28","C29","C210",
                       "C211","C212" , "C213", "C214", "C215",
-                      "C216"}:
+                      "C216", "C217", "C218"}:
             atom_to_moiety.append("Oleoyl")
 
         # Headgroup
