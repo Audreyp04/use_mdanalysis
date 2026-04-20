@@ -36,13 +36,10 @@ def prep():
 # =========================
 # CONTACT CALCULATION
 # =========================
-def build_atom_to_lipid_map(popx_resi):
-    atom_to_lipid = np.empty(len(popx_resi.atoms), dtype=int)
-    idx = 0
-    for i, res in enumerate(popx_resi):
-        n_atoms = len(res.atoms)
-        atom_to_lipid[idx:idx + n_atoms] = i
-        idx += n_atoms
+
+def build_atom_to_lipid_map(popx_atoms):
+    resid_indices = popx_atoms.resindices
+    _, atom_to_lipid = np.unique(resid_indices, return_inverse=True)
     return atom_to_lipid
 
 def calculate_popx_popx_contacts(u, popx_atoms, atom_to_lipid, contact_matrix):
@@ -147,8 +144,8 @@ if __name__ == "__main__":
 
     u, popx_resi, popx_atoms, contact_matrix = prep()
 
-    atom_to_lipid = build_atom_to_lipid_map(popx_resi)
-
+    atom_to_lipid = build_atom_to_lipid_map(popx_atoms)
+    
     contact_freq_atom = calculate_popx_popx_contacts(
         u, popx_atoms, atom_to_lipid, contact_matrix
     )
