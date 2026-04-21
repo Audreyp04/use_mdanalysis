@@ -90,30 +90,28 @@ def calculate_contacts_vectorized(u, prot_resi, popx_atoms, contact_matrix):
 # =========================
 def build_moiety_map(popx_atoms):
     atom_to_moiety = []
-    moiety_names = ["headgroup", "glycerol", "palmitoyl", "oleoyl"]
+    moiety_names = ["Headgroup", "Palmitoyl", "Oleoyl"]
 
     for atom in popx_atoms:
         name = atom.name
 
-        # Headgroup
-        if name in {"P", "N", "O11", "O12", "O13", "O14"}:
-            atom_to_moiety.append("headgroup")
-
-        # Glycerol / linker
-        elif name in {"C1", "C2", "C3", "O21", "O22", "O31", "O32"}:
-            atom_to_moiety.append("glycerol")
-
         # sn-1 chain (palmitoyl)
-        elif name.startswith("C1") and len(name) > 2:
-            atom_to_moiety.append("palmitoyl")
+        if name in {"C3","C31","C32","C33","C34","C35" , 
+                      "C36", "C37", "C38","C39","C310",
+                      "C311","C312" , "C313", "C314", "C315",
+                      "C316"}:
+            atom_to_moiety.append("Palmitoyl")
 
         # sn-2 chain (oleoyl)
-        elif name.startswith("C2") and len(name) > 2:
-            atom_to_moiety.append("oleoyl")
+        elif name in {"C2","C21","C22","C23","C24","C25" , 
+                      "C26", "C27", "C28","C29","C210",
+                      "C211","C212" , "C213", "C214", "C215",
+                      "C216", "C217", "C218"}:
+            atom_to_moiety.append("Oleoyl")
 
-        # Anything else (should now be empty)
+        # Headgroup
         else:
-            atom_to_moiety.append("other")
+            atom_to_moiety.append("Headgroup")
 
     return atom_to_moiety, moiety_names
 
