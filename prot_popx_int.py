@@ -10,7 +10,7 @@ from MDAnalysis.lib.distances import distance_array
 # =========================
 # USER INPUTS
 # =========================
-in_top = "nowat.tpr"
+in_top = "../../nowat.tpr"
 in_traj = "../traj/cat_pbc_nowat.xtc"
 title = "Hexamer & Free Lipid Interactions (Rep 1)"
 out_filename = "hex1_popx_moiety_contacts.png"
