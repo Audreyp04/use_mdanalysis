@@ -150,7 +150,7 @@ def collapse_across_subunits(contact_freq_moiety, local_resi):
 
     return collapsed
 
-def interacting_subunits(contact_freq_moiety, local_resi, subunit, threshold):
+def interacting_subunits(contact_freq_moiety, local_resi, subunit):
     """
     Returns a dict: {local_residue: sorted list of interacting subunits}
     """
