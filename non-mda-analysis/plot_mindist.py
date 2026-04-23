@@ -1,3 +1,6 @@
+#Written by Audrey D. Prendergast
+#Untested - intended for use with GROMACS mindist output (mindist.xvg)
+
 import matplotlib.pyplot as plt
 import numpy as np
 
