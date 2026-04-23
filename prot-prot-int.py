@@ -8,7 +8,7 @@ from MDAnalysis.lib.distances import distance_array
 #USER INPUTS
 in_traj = '../traj/cat_pbc_nowat.xtc'
 in_top = 'nowat.tpr'
-outfile = 'hex1_ppi_mindist.png'
+outfile = 'hex1_ppi.png'
 title = 'Protein-Protein Interactions (Hexamer, Rep1)'
 cutoff = 4.0 #in angstroms
 
