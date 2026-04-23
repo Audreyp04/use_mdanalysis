@@ -50,5 +50,8 @@ def plot_moiety_contacts(time, dist):
 
 if __name__ == "__main__":
     u, prot, memb = prep()
+    print("Prep complete")
     time, dist = calculate_distances(u, prot, memb)
+    print("Distance calculations complete")
     plot_moiety_contacts(time, dist)
+    print("Plotting complete")
