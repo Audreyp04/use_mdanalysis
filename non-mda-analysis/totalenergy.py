@@ -1,3 +1,6 @@
+#Written by Audrey D. Prendergast
+#Fully functional as of 4/22/2026
+
 import matplotlib.pyplot as plt
 import pyedr
 
