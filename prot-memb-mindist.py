@@ -1,3 +1,5 @@
+
+
 import numpy as np
 import MDAnalysis as mda
 import matplotlib.pyplot as plt
@@ -8,8 +10,8 @@ from MDAnalysis.lib.distances import distance_array
 #USER INPUTS
 in_traj = '../traj/cat_pbc_nowat.xtc'
 in_top = 'nowat.tpr'
-outfile = 'hex1_ppi.png'
-title = 'Protein-Protein Interactions (Hexamer, Rep1)'
+outfile = 'hex1_mindist.png'
+title = 'Protein to Membrane Minimum Distances (Hexamer, Rep1)'
 
 #This must be a matplotlib set color OR a HEX Code formated this way: '#ABC123'
 color = 'darkslateblue'
