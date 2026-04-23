@@ -6,10 +6,10 @@ from collections import defaultdict
 from MDAnalysis.lib.distances import distance_array
 
 #USER INPUTS
-in_traj = ''
-in_top = ''
-outfile = ''
-title = ''
+in_traj = '../traj/cat_pbc_nowat.xtc'
+in_top = 'nowat.tpr'
+outfile = 'hex1_ppi_mindist.png'
+title = 'Protein-Protein Interactions (Hexamer, Rep1)'
 cutoff = 4.0 #in angstroms
 
 #prep for analysis
@@ -67,3 +67,8 @@ def plot_moiety_contacts(prot_resi, contact_freq):
     plt.tight_layout()
     plt.savefig(outfile, dpi=300, bbox_inches="tight")
     plt.close()
+
+if __name__ == "__main__":
+    u, prot, prot_resi, prot_atoms, contact_matrix = prep()
+    contact_freq = calculate_popx_popx_contacts(u, prot_resi, prot_atoms, contact_matrix)
+    plot_moiety_contacts(prot_resi, contact_freq)
