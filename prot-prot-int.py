@@ -69,6 +69,6 @@ def plot_moiety_contacts(prot_resi, contact_freq):
     plt.close()
 
 if __name__ == "__main__":
-    u, prot, prot_resi, prot_atoms, contact_matrix = prep()
+    u, prot_resi, prot_atoms, contact_matrix = prep()
     contact_freq = calculate_popx_popx_contacts(u, prot_resi, prot_atoms, contact_matrix)
     plot_moiety_contacts(prot_resi, contact_freq)
