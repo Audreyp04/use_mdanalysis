@@ -38,7 +38,7 @@ def calculate_popx_popx_contacts(u, prot_resi, prot_atoms, contact_matrix):
 
         # Exclude self-contacts
         same_chain = (
-            prot_resi[:, None] == prot_resi[None, :]
+            prot_resi[:] == prot_resi[:]
         )
         atom_contacts = (dists < cutoff) & ~same_chain
 
