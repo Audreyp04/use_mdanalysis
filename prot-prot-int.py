@@ -1,3 +1,6 @@
+#Written by Audrey D. Prendergast
+#NOT FUNCTIONAL - WIP
+
 import numpy as np
 import seaborn as sns
 import MDAnalysis as mda

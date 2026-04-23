@@ -1,4 +1,5 @@
-
+#Written by Audrey D. Prendergast
+#NOT FUNCTIONAL - WIP
 
 import numpy as np
 import MDAnalysis as mda
