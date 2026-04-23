@@ -15,19 +15,16 @@ cutoff = 4.0 #in angstroms
 #prep for analysis
 def prep():
     u = mda.Universe(in_top, in_traj)
-    popx = u.select_atoms("resname POPX and not name H*")
+    prot = u.select_atoms("protein")
 
-    popx_resi = popx.residues
-    popx_atoms = popx.atoms
+    prot_resi = prot.residues
+    prot_atoms = prot.atoms
 
-    print(f"POPX molecules: {len(popx_resi)}")
-    print(f"POPX atoms: {len(popx_atoms)}")
-
-    contact_matrix = np.zeros((len(popx_atoms), len(popx_atoms)))
-    return u, popx_resi, popx_atoms, contact_matrix
+    contact_matrix = np.zeros((len(prot_atoms), len(prot_atoms)))
+    return u, prot_resi, prot_atoms, contact_matrix
 
 #calculate contacts
-def calculate_popx_popx_contacts(u, popx_atoms, atom_to_lipid, contact_matrix):
+def calculate_popx_popx_contacts(u, prot_resi, prot_atoms, contact_matrix):
 
     nframes = 0
 
@@ -35,20 +32,38 @@ def calculate_popx_popx_contacts(u, popx_atoms, atom_to_lipid, contact_matrix):
         nframes += 1
 
         dists = distance_array(
-            popx_atoms.positions,
-            popx_atoms.positions
+            prot_atoms.positions,
+            prot_atoms.positions
         )
 
-        # Exclude self-contacts and same-lipid contacts
-        same_lipid = (
-            atom_to_lipid[:, None] == atom_to_lipid[None, :]
+        # Exclude self-contacts
+        same_chain = (
+            prot_resi[:, None] == prot_resi[None, :]
         )
-        atom_contacts = (dists < cutoff) & ~same_lipid
+        atom_contacts = (dists < cutoff) & ~same_chain
 
         contact_matrix += atom_contacts.astype(int)
 
     contact_freq = contact_matrix / nframes
     return contact_freq
 
-
 #plot contacts
+def plot_moiety_contacts(prot_resi, contact_freq):
+
+    plt.figure(figsize=(8, 8))
+    sns.heatmap(
+        contact_freq,
+        xticklabels=prot_resi,
+        yticklabels=prot_resi,
+        cmap="magma",
+        cbar_kws={"label": "Contact Frequency"},
+        vmin=0, vmax=0.25
+    )
+
+    plt.xlabel("Protein Residue")
+    plt.ylabel("Protein Residue")
+    plt.title(title)
+
+    plt.tight_layout()
+    plt.savefig(outfile, dpi=300, bbox_inches="tight")
+    plt.close()
