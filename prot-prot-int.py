@@ -14,25 +14,23 @@ in_top = 'nowat.tpr'
 outfile = 'hex1_ppi.png'
 title = 'Chain-Chain Contact Frequency (Hexamer, Rep1)'
 cutoff = 4.0 #in angstroms
+residues_per_chain = 42
 
 #prep for analysis
 def prep():
     u = mda.Universe(in_top, in_traj)
     prot = u.select_atoms("protein")
-
     prot_atoms = prot.atoms
-
+    residues = prot_atoms.residues
+    nchains = len(residues) // residues_per_chain
     chains = {}
 
-    for atom in prot_atoms:
-            cid = atom.chainID   
-            if cid not in chains:
-                chains[cid] = []
-            chains[cid].append(atom.index)
+    for i in range(nchains):
+        start = i * residues_per_chain
+        end = (i + 1) * residues_per_chain
 
-    # convert atom indices to AtomGroups
-    for cid in chains:
-        chains[cid] = prot_atoms.universe.atoms[chains[cid]]
+        chain_residues = residues[start:end]
+        chains[f"Chain{i+1}"] = chain_residues.atoms
 
     return u, chains
 
