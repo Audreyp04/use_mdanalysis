@@ -2,6 +2,7 @@
 #NOT FUNCTIONAL - WIP
 
 import numpy as np
+import pandas as pd
 import MDAnalysis as mda
 import matplotlib.pyplot as plt
 
@@ -10,6 +11,7 @@ in_traj = '../traj/cat_pbc_nowat.xtc'
 in_top = 'nowat.tpr'
 outfile = 'hex1_mid_dist.png'
 title = 'Protein to Membrane Midplane Distances (Hexamer, Rep1)'
+window = 50 #window for rolling average
 
 #This must be a matplotlib set color OR a HEX Code formated this way: '#ABC123'
 color = 'darkslateblue'
@@ -38,11 +40,16 @@ def calculate_distances(u, prot, memb):
 
 #plot contacts
 def plot_moiety_contacts(time, dist):
-
+    time_df = pd.DataFrame(time)
+    dist_df = pd.DataFrame(dist)
+    time_smooth = time_df.rolling(window).mean()
+    dist_smooth = dist_df.rolling(window).mean()
     plt.figure(figsize = (8, 8))
-    plt.plot(time, dist, c=color)
+    plt.plot(time_smooth, dist_smooth, c=color)
     plt.xlabel("Time (ns)")
-    plt.ylabel("Distance to Membrane Midplane(nm)")
+    plt.ylabel("Distance to Membrane Midplane (nm)")
+    plt.xlim(0,2000)
+    plt.ylim(0,16)
     plt.title(title)
     plt.tight_layout()
     plt.savefig(outfile, dpi=300, bbox_inches="tight")
