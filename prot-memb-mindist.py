@@ -1,5 +1,5 @@
 #Written by Audrey D. Prendergast
-#NOT FUNCTIONAL - WIP
+#Fully functional as of 4/24/2026
 
 import numpy as np
 import pandas as pd
