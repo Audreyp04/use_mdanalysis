@@ -20,15 +20,20 @@ def prep():
     u = mda.Universe(in_top, in_traj)
     prot = u.select_atoms("protein")
 
-    prot_resi = prot.residues
     prot_atoms = prot.atoms
 
-    chains ={}
-    chain_ids = np.unique(prot_atoms.chainIDs)
+    chains = {}
 
-    for cid in chain_ids:
-        chains[cid] = prot_atoms.select_atoms(f"chainID {cid}")
-        
+    for atom in prot_atoms:
+            cid = atom.chainID   
+            if cid not in chains:
+                chains[cid] = []
+            chains[cid].append(atom.index)
+
+    # convert atom indices to AtomGroups
+    for cid in chains:
+        chains[cid] = prot_atoms.universe.atoms[chains[cid]]
+
     return u, chains
 
 #calculate contacts
