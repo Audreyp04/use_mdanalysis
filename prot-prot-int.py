@@ -68,7 +68,7 @@ def plot_moiety_contacts(chain_ids, contact_freq):
         yticklabels=chain_ids,
         cmap="magma",
         cbar_kws={"label": "Contact Frequency"},
-        vmin=0, vmax=0.25
+        vmin=0, vmax=1
     )
     plt.xlabel("Chain")
     plt.ylabel("Chain")
