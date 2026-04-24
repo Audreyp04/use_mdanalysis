@@ -24,9 +24,11 @@ def prep():
     prot_atoms = prot.atoms
 
     chains ={}
-    for seg in np.unique(prot_atoms.segids):
-        chains[seg] = prot_atoms.select_atoms(f"segid {seg}")
+    chain_ids = np.unique(prot_atoms.chainIDs)
 
+    for cid in chain_ids:
+        chains[cid] = prot_atoms.select_atoms(f"chainID {cid}")
+        
     return u, chains
 
 #calculate contacts
@@ -65,8 +67,8 @@ def plot_moiety_contacts(chain_ids, contact_freq):
         cbar_kws={"label": "Contact Frequency"},
         vmin=0, vmax=0.25
     )
-    plt.xlabel("Residue")
-    plt.ylabel("Residue")
+    plt.xlabel("Chain")
+    plt.ylabel("Chain")
     plt.title(title)
     plt.tight_layout()
     plt.savefig(outfile, dpi=300)
