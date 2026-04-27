@@ -60,7 +60,7 @@ def calculate_residue_contacts(u, chains):
 
                 r1 = chain_atom_resindex[c1]
                 r2 = chain_atom_resindex[c2]
-                
+
                 atom_i, atom_j = np.nonzero(contact_mat)
                 res_i = r1[atom_i]
                 res_j = r2[atom_j]
@@ -100,5 +100,8 @@ def plot_moiety_contacts(contact_freq, residue_labels):
 
 if __name__ == "__main__":
     u, chains, residue_labels = prep()
+    print("Prep complete!")
     contact_freq = calculate_residue_contacts(u, chains)
+    print("Contact calculations complete!")
     plot_moiety_contacts(contact_freq, residue_labels)
+    print("Plotting complete!")
