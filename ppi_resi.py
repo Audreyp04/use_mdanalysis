@@ -44,9 +44,7 @@ def calculate_residue_contacts(u, chains):
 
     chain_atom_resindex = []
     for chain in chains:
-        atom_resindex = np.array(
-            [res.ix % residues_per_chain for res in chain.atoms.residues]
-        )
+        atom_resindex = chain.atoms.resindices % residues_per_chain
         chain_atom_resindex.append(atom_resindex)
 
     for ts in u.trajectory:
@@ -62,16 +60,20 @@ def calculate_residue_contacts(u, chains):
 
                 r1 = chain_atom_resindex[c1]
                 r2 = chain_atom_resindex[c2]
-
-                for i in range(residues_per_chain):
-                    mask_i = r1 == i
-                    if not np.any(mask_i):
-                        continue
-
-                    contacted_j = contact_mat[mask_i].any(axis=0)
-                    j_indices = np.unique(r2[contacted_j])
-                    contact_counts[i, j_indices] += 1
-                    contact_counts[j_indices, i] += 1
+                
+                atom_i, atom_j = np.nonzero(contact_mat)
+                res_i = r1[atom_i]
+                res_j = r2[atom_j]
+                unique_pairs = np.unique(
+                    np.stack((res_i, res_j), axis=1),
+                    axis=0
+                )
+                np.add.at(contact_counts,
+                          (unique_pairs[:, 0], unique_pairs[:, 1]),
+                          1)
+                np.add.at(contact_counts,
+                          (unique_pairs[:, 1], unique_pairs[:, 0]),
+                          1)
 
     n_chain_pairs = nchains * (nchains - 1) / 2
     contact_freq = contact_counts / (nframes * n_chain_pairs)
