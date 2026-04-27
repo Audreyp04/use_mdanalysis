@@ -89,7 +89,7 @@ def plot_moiety_contacts(contact_freq, residue_labels):
         yticklabels=residue_labels,
         cmap="magma",
         cbar_kws={"label": "Contact Frequency"},
-        vmin=0, vmax=1
+        vmin=0, vmax=0.5
     )
     plt.xlabel("Residue")
     plt.ylabel("Residue")
