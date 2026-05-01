@@ -1,5 +1,5 @@
 #Written by Audrey D. Prendergast
-#work in progress
+#Fully functional as of 4/30/2026
 
 import numpy as np
 import seaborn as sns
