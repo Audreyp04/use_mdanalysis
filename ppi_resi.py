@@ -9,12 +9,12 @@ from collections import defaultdict
 from MDAnalysis.lib.distances import distance_array
 
 #USER INPUTS
-in_traj = '../traj/cat_pbc_nowat.xtc'
-in_top = 'nowat.tpr'
-outfile = 'hex1_resi_ppi.png'
-title = 'Residue Averaged Contact Frequency (Hexamer, Rep1)'
-cutoff = 4.0 #in angstroms
-residues_per_chain = 42
+in_top = args.top 
+in_traj = args.traj
+outfile = f'{args.out}resi_ppi.png'
+title = f'Residue Averaged Contact Frequency - {args.title}'
+cutoff = args.cutoff
+residues_per_chain = args.length
 
 #prep for analysis
 def prep():

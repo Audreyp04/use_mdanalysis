@@ -7,10 +7,10 @@ import MDAnalysis as mda
 import matplotlib.pyplot as plt
 
 #USER INPUTS
-in_traj = '../traj/cat_pbc_nowat.xtc'
-in_top = 'nowat.tpr'
-outfile = 'hex1_mid_dist.png'
-title = 'Protein to Membrane Midplane Distances (Hexamer, Rep1)'
+in_top = args.top 
+in_traj = args.traj
+outfile = f'{args.out}_mid_dist.png'
+title = f'Protein to Membrane Midplane Distances - {args.title}'
 window = 50 #window for rolling average
 
 #This must be a matplotlib set color OR a HEX Code formated this way: '#ABC123'

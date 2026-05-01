@@ -11,11 +11,11 @@ from collections import defaultdict
 # =========================
 # USER INPUTS
 # =========================
-in_top = "../../nowat.tpr"
-in_traj = "../traj/cat_pbc_nowat.xtc"
-title = "Free Lipid Interactions (Rep 1)"
-out_filename = "hex-popx-int.png"
-cutoff = 4.0          # Å
+in_top = args.top 
+in_traj = args.traj
+title = f"Free Lipid Interactions - {args.title}"
+out_filename = f"{args.out}-popx-int.png"
+cutoff = args.cutoff
 
 # =========================
 # PREP

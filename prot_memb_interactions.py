@@ -10,12 +10,12 @@ from MDAnalysis.lib.distances import capped_distance
 # =========================
 # USER INPUTS
 # =========================
-in_top = "nowat.tpr"
-in_traj = "../traj/cat_pbc_nowat.xtc"
-title = "Hexamer & Membrane Lipid Interactions (Rep 1)"
-out_filename = "hex_memb_contacts.png"
-cutoff = 4.0          # Å
-subunit_length = 42
+in_top = args.top 
+in_traj = args.traj
+title = f"Protein & Membrane Lipid Interactions - {args.title}"
+out_filename = f"{args.out}_memb_contacts.png"
+cutoff = args.cutoff          # Å
+subunit_length = args.length
 threshold=0.80
 
 # =========================

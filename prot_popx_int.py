@@ -10,12 +10,12 @@ from MDAnalysis.lib.distances import distance_array
 # =========================
 # USER INPUTS
 # =========================
-in_top = "../../nowat.tpr"
-in_traj = "../traj/cat_pbc_nowat.xtc"
-title = "Hexamer & Free Lipid Interactions (Rep 1)"
-out_filename = "hex1_popx_moiety_contacts.png"
-cutoff = 4.0          # Å
-subunit_length = 42
+in_top = args.top 
+in_traj = args.traj
+title = f"Protein & Free Lipid Interactions - {args.title}"
+out_filename = f"{args.out}_popx_moiety_contacts.png"
+cutoff = args.cutoff
+subunit_length = args.length
 threshold=0.80
 
 # =========================
