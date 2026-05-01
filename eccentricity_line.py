@@ -11,17 +11,12 @@ from matplotlib import colormaps
 from matplotlib.collections import LineCollection
 from matplotlib.colors import Normalize
 
+in_top = args.top 
+in_traj = args.traj
+title = f"Eccentricity - {args.title}" 
+out_filename = f"{args.out}_ecc.png" 
+window = 5 
 
-# Change the items after '=' in these lines
-
-in_top = "top.nowat.pdb" # topology file (path) that matches trajectory (.tpr, .pdb, .gro)
-in_traj = "cat.pbc.nowat.xtc" # trajectory file (path) (.xtc, .trr)
-title = "Hexamer Eccentricity (Rep 1)" # Title to go on figure
-out_filename = "hex1_ecc.png" # Name for figure .png file
-window = 5 #window size for smoothed data, 50 is usually good
-
-#CHANGE NOTHING BELOW THIS LINE
-#------------------------------
 u=mda.Universe(in_top, in_traj)
 ag=u.select_atoms("protein")
 
