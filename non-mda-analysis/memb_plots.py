@@ -56,8 +56,8 @@ plot_map(
     title=f"{SYSTEM_NAME} – Rep {REP}\nAverage Membrane Thickness",
     cmap="magma",
     cbar_label="Thickness (nm)",
-    vmin=3,
-    vmax=5
+    vmin=4.55,
+    vmax=4.65
 )
 
 plot_map(
@@ -65,6 +65,6 @@ plot_map(
     title=f"{SYSTEM_NAME} – Rep {REP}\nAverage Neighbor Density (Top Leaflet)",
     cmap="magma",
     cbar_label="Neighbor count",
-    vmin=0,
+    vmin=4,
     vmax=5
 )
