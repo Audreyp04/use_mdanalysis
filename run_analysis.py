@@ -1,13 +1,9 @@
 import argparse
 #analysis functions
-import eccentricity_avgs
 import eccentricity_line
-import occupancy_heatmap
 import popx_popx_int
 import ppi_resi
-import prot_memb_avgs
 import prot_memb_interactions
-import prot_popx_avgs
 import prot_popx_int
 import prot_memb_mindist
 import prot_prot_int
@@ -27,7 +23,6 @@ p.add_argument("-c","--cutoff", required=False, default=4.0, help="Cutoff distan
 args = p.parse_args()
 
 eccentricity_line(args)
-occupancy_heatmap(args)
 popx_popx_int(args)
 ppi_resi(args)
 prot_memb_interactions(args)
