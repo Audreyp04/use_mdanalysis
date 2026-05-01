@@ -19,7 +19,6 @@ p.add_argument("-f", "--traj", required=True, help="Trajectory file (path), pref
 p.add_argument("-s", "--top", required=True, help="Topology file (path), should match the atoms in traj (no waters)")
 p.add_argument("-o","--out", required=True, help="System name to append to outfile names (e.g. Hex1_lipids)")
 p.add_argument("-t","--title", required=True, help="System name for title of plots, contained within quotes (i.e. 'Hexamer (Rep 1, W/ Free Lipids))")
-p.add_argument("-r","--reps", required=False, default=3, help="Number of replicates of the system", type=int)
 
 # other required variables
 p.add_argument("-l","--length",required=True, help="Chain length of protein. All subunits must be identical", type=int)
