@@ -10,12 +10,12 @@ from MDAnalysis.lib.distances import capped_distance
 # =========================
 # USER INPUTS
 # =========================
-in_top = args.top 
-in_traj = args.traj
-title = f"Protein & Membrane Lipid Interactions - {args.title}"
-out_filename = f"{args.out}_memb_contacts.png"
-cutoff = args.cutoff          # Å
-subunit_length = args.length
+in_top = top 
+in_traj = traj
+name = f"Protein & Membrane Lipid Interactions - {title}"
+out_filename = f"{out}_memb_contacts.png"
+cutoff = cutoff          # Å
+subunit_length = length
 threshold=0.80
 
 # =========================
@@ -218,7 +218,7 @@ def plot_contacts(res_labels, lipid_types, collapsed_contacts, nframes):
 
     plt.xlabel("Membrane Component")
     plt.ylabel("Protein Residue")
-    plt.title(title)
+    plt.title(name)
 
     plt.tight_layout()
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")

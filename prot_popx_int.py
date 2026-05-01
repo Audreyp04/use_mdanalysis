@@ -10,12 +10,12 @@ from MDAnalysis.lib.distances import distance_array
 # =========================
 # USER INPUTS
 # =========================
-in_top = args.top 
-in_traj = args.traj
-title = f"Protein & Free Lipid Interactions - {args.title}"
-out_filename = f"{args.out}_popx_moiety_contacts.png"
-cutoff = args.cutoff
-subunit_length = args.length
+in_top = top 
+in_traj = traj
+name = f"Protein & Free Lipid Interactions - {title}"
+out_filename = f"{out}_popx_moiety_contacts.png"
+cutoff = cutoff
+subunit_length = length
 threshold=0.80
 
 # =========================
@@ -222,7 +222,7 @@ def plot_moiety_contacts(res_labels, moiety_names, collapsed_contacts):
 
     plt.xlabel("POPC Moiety")
     plt.ylabel("Protein Residue")
-    plt.title(title)
+    plt.title(name)
 
     plt.tight_layout()
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")

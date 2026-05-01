@@ -11,10 +11,10 @@ from matplotlib import colormaps
 from matplotlib.collections import LineCollection
 from matplotlib.colors import Normalize
 
-in_top = args.top 
-in_traj = args.traj
-title = f"Eccentricity - {args.title}" 
-out_filename = f"{args.out}_ecc.png" 
+in_top = top 
+in_traj = traj
+name = f"Eccentricity - {title}" 
+out_filename = f"{out}_ecc.png" 
 window = 5 
 
 u=mda.Universe(in_top, in_traj)
@@ -61,7 +61,7 @@ def plot_eccentricity():
     ax.set_xlim(0,2000)
     ax.set_xlabel("Time (ns)")
     ax.set_ylabel("Eccentricity")
-    ax.set_title(title)
+    ax.set_title(name)
 
     cbar = fig.colorbar(lc, ax=ax)
     cbar.set_label("Eccentricity")

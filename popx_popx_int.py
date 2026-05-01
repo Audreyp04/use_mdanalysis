@@ -11,11 +11,11 @@ from collections import defaultdict
 # =========================
 # USER INPUTS
 # =========================
-in_top = args.top 
-in_traj = args.traj
-title = f"Free Lipid Interactions - {args.title}"
-out_filename = f"{args.out}-popx-int.png"
-cutoff = args.cutoff
+in_top = top 
+in_traj = traj
+name = f"Free Lipid Interactions - {title}"
+out_filename = f"{out}-popx-int.png"
+cutoff = cutoff
 
 # =========================
 # PREP
@@ -139,7 +139,7 @@ def plot_moiety_contacts(moiety_names, collapsed_contacts):
 
     plt.xlabel("POPC Moiety")
     plt.ylabel("POPC Moiety")
-    plt.title(title)
+    plt.title(name)
 
     plt.tight_layout()
     plt.savefig(out_filename, dpi=300, bbox_inches="tight")

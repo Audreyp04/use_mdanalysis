@@ -7,10 +7,10 @@ import MDAnalysis as mda
 import matplotlib.pyplot as plt
 
 #USER INPUTS
-in_top = args.top 
-in_traj = args.traj
-outfile = f'{args.out}_mid_dist.png'
-title = f'Protein to Membrane Midplane Distances - {args.title}'
+in_top = top 
+in_traj = traj
+outfile = f'{out}_mid_dist.png'
+name = f'Protein to Membrane Midplane Distances - {title}'
 window = 50 #window for rolling average
 
 #This must be a matplotlib set color OR a HEX Code formated this way: '#ABC123'
@@ -50,7 +50,7 @@ def plot_moiety_contacts(time, dist):
     plt.ylabel("Distance to Membrane Midplane (nm)")
     plt.xlim(0,2000)
     plt.ylim(0,16)
-    plt.title(title)
+    plt.title(name)
     plt.tight_layout()
     plt.savefig(outfile, dpi=300, bbox_inches="tight")
     plt.close()

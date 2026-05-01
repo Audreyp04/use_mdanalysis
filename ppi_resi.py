@@ -9,12 +9,12 @@ from collections import defaultdict
 from MDAnalysis.lib.distances import distance_array
 
 #USER INPUTS
-in_top = args.top 
-in_traj = args.traj
-outfile = f'{args.out}resi_ppi.png'
-title = f'Residue Averaged Contact Frequency - {args.title}'
-cutoff = args.cutoff
-residues_per_chain = args.length
+in_top = top 
+in_traj = traj
+outfile = f'{out}resi_ppi.png'
+name = f'Residue Averaged Contact Frequency - {title}'
+cutoff = cutoff
+residues_per_chain = length
 
 #prep for analysis
 def prep():
@@ -93,7 +93,7 @@ def plot_moiety_contacts(contact_freq, residue_labels):
     )
     plt.xlabel("Residue")
     plt.ylabel("Residue")
-    plt.title(title)
+    plt.title(name)
     plt.tight_layout()
     plt.savefig(outfile, dpi=300)
     plt.close()
