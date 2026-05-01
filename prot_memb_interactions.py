@@ -8,15 +8,27 @@ import seaborn as sns
 from MDAnalysis.lib.distances import capped_distance
 
 # =========================
-# USER INPUTS
+# GLOBALS (initialized in init)
 # =========================
-in_top = top 
-in_traj = traj
-name = f"Protein & Membrane Lipid Interactions - {title}"
-out_filename = f"{out}_memb_contacts.png"
-cutoff = cutoff          # Å
-subunit_length = length
-threshold=0.80
+in_top = None
+in_traj = None
+name = None
+out_filename = None
+cutoff = None
+subunit_length = None
+threshold = 0.80
+
+
+def init(*, top, traj, out, title, cutoff_val, length):
+    global in_top, in_traj, name, out_filename, cutoff, subunit_length
+
+    in_top = top
+    in_traj = traj
+    cutoff = cutoff_val
+    subunit_length = length
+
+    name = f"Protein & Membrane Lipid Interactions - {title}"
+    out_filename = f"{out}_memb_contacts.png"
 
 # =========================
 # PREP

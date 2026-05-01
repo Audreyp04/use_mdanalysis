@@ -9,29 +9,24 @@ from MDAnalysis.lib.distances import distance_array
 from collections import defaultdict
 
 # =========================
-# USER INPUTS
+# GLOBALS (initialized via init)
 # =========================
-in_top = top 
-in_traj = traj
-name = f"Free Lipid Interactions - {title}"
-out_filename = f"{out}-popx-int.png"
-cutoff = cutoff
+u = None
+popx_atoms = None
+name = None
+out_filename = None
+cutoff = None
 
-# =========================
-# PREP
-# =========================
-def prep():
-    u = mda.Universe(in_top, in_traj)
-    popx = u.select_atoms("resname POPX and not name H*")
 
-    popx_resi = popx.residues
-    popx_atoms = popx.atoms
+def init(*, top, traj, out, title, cutoff_val):
+    global u, popx_atoms, name, out_filename, cutoff
 
-    print(f"POPX molecules: {len(popx_resi)}")
-    print(f"POPX atoms: {len(popx_atoms)}")
+    cutoff = cutoff_val
+    name = f"Free Lipid Interactions - {title}"
+    out_filename = f"{out}-popx-int.png"
 
-    contact_matrix = np.zeros((len(popx_atoms), len(popx_atoms)))
-    return u, popx_resi, popx_atoms, contact_matrix
+    u = mda.Universe(top, traj)
+    popx_atoms = u.select_atoms("resname POPX and not name H*")
 
 
 # =========================

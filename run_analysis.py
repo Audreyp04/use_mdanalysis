@@ -22,7 +22,17 @@ p.add_argument("-c","--cutoff", required=False, default=4.0, help="Cutoff distan
 
 args = p.parse_args()
 
-eccentricity_line(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+eccentricity_line.init(
+    top=args.top,
+    traj=args.traj,
+    out=args.out,
+    title=args.title
+)
+
+eccentricity_line.align_trajectory()
+eccentricity_line.calculate_eccentricity()
+eccentricity_line.plot_eccentricity()
+
 popx_popx_int(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
 ppi_resi(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
 prot_memb_interactions(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)

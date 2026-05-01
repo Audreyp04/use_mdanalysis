@@ -6,15 +6,25 @@ import pandas as pd
 import MDAnalysis as mda
 import matplotlib.pyplot as plt
 
-#USER INPUTS
-in_top = top 
-in_traj = traj
-outfile = f'{out}_mid_dist.png'
-name = f'Protein to Membrane Midplane Distances - {title}'
-window = 50 #window for rolling average
 
-#This must be a matplotlib set color OR a HEX Code formated this way: '#ABC123'
-color = 'darkslateblue'
+# =========================
+# GLOBALS
+# =========================
+in_top = None
+in_traj = None
+outfile = None
+name = None
+window = 50
+color = "darkslateblue"
+
+
+def init(*, top, traj, out, title):
+    global in_top, in_traj, outfile, name
+
+    in_top = top
+    in_traj = traj
+    outfile = f"{out}_mid_dist.png"
+    name = f"Protein to Membrane Midplane Distances - {title}"
 
 #prep for analysis
 def prep():

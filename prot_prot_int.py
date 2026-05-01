@@ -8,13 +8,29 @@ import matplotlib.pyplot as plt
 from collections import defaultdict 
 from MDAnalysis.lib.distances import distance_array
 
-#USER INPUTS
-in_top = top 
-in_traj = traj
-outfile = f'{out}_ppi.png'
-name = f'Chain-Chain Contact Frequency - {title}'
-cutoff = cutoff
-residues_per_chain = length
+
+# =========================
+# GLOBALS
+# =========================
+in_top = None
+in_traj = None
+outfile = None
+name = None
+cutoff = None
+residues_per_chain = None
+
+
+def init(*, top, traj, out, title, cutoff_val, length):
+    global in_top, in_traj, outfile, name, cutoff, residues_per_chain
+
+    in_top = top
+    in_traj = traj
+    cutoff = cutoff_val
+    residues_per_chain = length
+
+    outfile = f"{out}_ppi.png"
+    name = f"Chain-Chain Contact Frequency - {title}"
+
 
 #prep for analysis
 def prep():

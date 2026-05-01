@@ -8,13 +8,33 @@ import matplotlib.pyplot as plt
 from collections import defaultdict 
 from MDAnalysis.lib.distances import distance_array
 
-#USER INPUTS
-in_top = top 
-in_traj = traj
-outfile = f'{out}resi_ppi.png'
-name = f'Residue Averaged Contact Frequency - {title}'
-cutoff = cutoff
-residues_per_chain = length
+
+# =========================
+# GLOBALS (initialized via init)
+# =========================
+in_top = None
+in_traj = None
+outfile = None
+name = None
+cutoff = None
+residues_per_chain = None
+
+
+def init(*, top, traj, out, title, cutoff_val, length):
+    """
+    Initialize global state for residue–residue PPI analysis.
+    """
+    global in_top, in_traj, outfile, name, cutoff, residues_per_chain
+
+    in_top = top
+    in_traj = traj
+    cutoff = cutoff_val
+    residues_per_chain = length
+
+    outfile = f"{out}resi_ppi.png"
+    name = f"Residue Averaged Contact Frequency - {title}"
+
+
 
 #prep for analysis
 def prep():

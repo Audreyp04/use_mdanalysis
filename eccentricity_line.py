@@ -11,14 +11,26 @@ from matplotlib import colormaps
 from matplotlib.collections import LineCollection
 from matplotlib.colors import Normalize
 
-in_top = top 
-in_traj = traj
-name = f"Eccentricity - {title}" 
-out_filename = f"{out}_ecc.png" 
-window = 5 
 
-u=mda.Universe(in_top, in_traj)
-ag=u.select_atoms("protein")
+# =========================
+# GLOBALS (initialized via init)
+# =========================
+u = None
+ag = None
+name = None
+out_filename = None
+window = 5
+
+
+def init(*, top, traj, out, title):
+    global u, ag, name, out_filename
+
+    name = f"Eccentricity - {title}"
+    out_filename = f"{out}_ecc.png"
+
+    u = mda.Universe(top, traj)
+    ag = u.select_atoms("protein")
+
 
 def align_trajectory():
     align=AlignTraj(u, u, select="protein")
