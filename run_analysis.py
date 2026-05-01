@@ -22,5 +22,18 @@ p.add_argument("-t","--title", required=True, help="System name for title of plo
 
 # other required variables
 p.add_argument("-l","--length",required=True, help="Chain length of protein. All subunits must be identical")
-p.add_argument("-w", "--window", required=False, help="Window size for rolling average", default=50)
 p.add_argument("-c","--cutoff", required=False, default=4.0, help="Cutoff distance (A) for interactions")
+
+args = p.parse_args()
+
+eccentricity_avgs(args)
+eccentricity_line(args)
+occupancy_heatmap(args)
+popx_popx_int(args)
+ppi_resi(args)
+prot_memb_avgs(args)
+prot_memb_interactions(args)
+prot_popx_avgs(args)
+prot_popx_int(args)
+prot_memb_mindist(args)
+prot_prot_int(args)
