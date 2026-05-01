@@ -22,10 +22,10 @@ p.add_argument("-c","--cutoff", required=False, default=4.0, help="Cutoff distan
 
 args = p.parse_args()
 
-eccentricity_line(args)
-popx_popx_int(args)
-ppi_resi(args)
-prot_memb_interactions(args)
-prot_popx_int(args)
-prot_memb_mindist(args)
-prot_prot_int(args)
+eccentricity_line(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+popx_popx_int(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+ppi_resi(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+prot_memb_interactions(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+prot_popx_int(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+prot_memb_mindist(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
+prot_prot_int(top=args.top, traj=args.traj, out=args.out, title=args.title, length=args.length, cutoff=args.cutoff)
