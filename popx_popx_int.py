@@ -145,7 +145,7 @@ def plot_moiety_contacts(moiety_names, collapsed_contacts):
 # =========================
 if __name__ == "__main__":
 
-    u, popx_resi, popx_atoms, contact_matrix = prep()
+    u, popx_resi, popx_atoms, contact_matrix = init()
 
     atom_to_lipid = build_atom_to_lipid_map(popx_atoms)
     
