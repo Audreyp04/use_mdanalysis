@@ -33,13 +33,13 @@ def init(*, top, traj, out, title, cutoff_val):
 # CONTACT CALCULATION
 # =========================
 
-def build_atom_to_lipid_map(popx_atoms):
+def build_atom_to_lipid_map():
     resid_indices = popx_atoms.resindices
     _, atom_to_lipid = np.unique(resid_indices, return_inverse=True)
     return atom_to_lipid
 
-def calculate_popx_popx_contacts(u, popx_atoms, atom_to_lipid, contact_matrix):
-
+def calculate_popx_popx_contacts(atom_to_lipid):
+    contact_matrix = np.zeros((len(popx_atoms), len(popx_atoms)))
     nframes = 0
 
     for ts in u.trajectory:
@@ -64,7 +64,7 @@ def calculate_popx_popx_contacts(u, popx_atoms, atom_to_lipid, contact_matrix):
 # =========================
 # MOIETY COLLAPSING
 # =========================
-def build_moiety_map(popx_atoms):
+def build_moiety_map():
     atom_to_moiety = []
     moiety_names = ["Headgroup", "Palmitoyl", "Oleoyl"]
 
